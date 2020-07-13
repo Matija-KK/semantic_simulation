@@ -1,0 +1,25 @@
+ <?xml version="1.0" ?>
+<sdf version="1.5">
+  <model name="Plant">
+    <static>true</static>
+    <link name="link">
+      <collision name="collision">
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://plants/meshes/plant.dae</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://plants/meshes/plant.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+  </model>
+</sdf>
+<color sid="ambient">0 0 0 1</color>

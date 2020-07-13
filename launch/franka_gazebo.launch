@@ -1,0 +1,32 @@
+<launch>
+    <!-- Gazebo -->
+    <arg name="world" default="$(find semantic_simulation)/worlds/simulation_world.world"/>
+    <arg name="gui" default="true"/>
+    <arg name="args" default=""/>
+    <param name="/use_sim_time" value="true" />
+
+    <node name="gazebo" pkg="gazebo_ros" type="gzserver" args="$(arg world) $(arg args)" respawn="false" output="screen"/>
+
+    <!-- start gui -->
+    <group if="$(arg gui)">
+        <node name="gazebo_gui" pkg="gazebo_ros" type="gzclient" respawn="false" output="screen"/>
+    </group>
+
+
+    <!-- Panda model-->
+    <arg name="effort_interface" default="false" />
+	<arg name="position_interface" default="true" />
+	<param name="robot_description" command="$(find xacro)/xacro --inorder $(find semantic_simulation)/urdf/panda_arm_camera.urdf.xacro effort_interface:=$(arg effort_interface) position_interface:=$(arg position_interface)"/>
+    
+    <node name="spawn" pkg="gazebo_ros" type="spawn_model" args="-param robot_description -urdf -model panda"/>
+
+	<rosparam file="$(find franka_gazebo_moveit)/config/position_controller.yaml" command="load" />
+	<rosparam command="load" file="$(find franka_gazebo_moveit)/config/joint_states.yaml"/>
+	
+	<node name="franka_controller_spawner" pkg="controller_manager" type="spawner" args=
+		"joint_state_controller
+		panda_arm_controller"/>
+	<rosparam command="load" file="$(find franka_gazebo_moveit)/config/default.yaml"/>
+
+	<node pkg="robot_state_publisher" type="robot_state_publisher" name="rob_st_pub"/>
+</launch>
